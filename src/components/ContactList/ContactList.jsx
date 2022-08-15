@@ -1,42 +1,27 @@
-import toast from 'react-hot-toast';
+import { useGetContactsQuery } from 'redux/contactsSlice';
 import Box from 'components/Box';
-import { ContactItem } from './ContactItem';
-import { useDispatch, useSelector } from 'react-redux';
-import { deleteContact, getContacts, getFilter } from 'redux/contactsSlice';
+import ContactItem from 'components/ContactItem';
 import NotificationText from 'components/NotificationText';
 
 const ContactList = () => {
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
+  const { data: contacts } = useGetContactsQuery();
+  // const filter = useSelector(getFilter);
 
-  const filterContacts = () =>
-    contacts.filter(({ name }) => name.toLocaleLowerCase().includes(filter));
+  // const filterContacts = () =>
+  //   contacts.filter(({ name }) => name.toLocaleLowerCase().includes(filter));
 
-  const visibleContacts = filterContacts();
-  console.log('filteredContacts :>> ', visibleContacts.length);
-
-  const handleDeleteContact = id => {
-    dispatch(deleteContact(id));
-    toast('Bye... Deleted contact', {
-      icon: '😢',
-    });
-  };
+  // const visibleContacts = filterContacts();
+  // const visibleContacts = contacts;
+  // console.log('filteredContacts :>> ', visibleContacts.length);
 
   return (
     <>
-      {visibleContacts.length > 0 ? (
+      {contacts.length > 0 ? (
         <Box display="flex" flexDirection="column" as="ul">
-          {visibleContacts.map(({ id, name, number }) => {
-            return (
-              <ContactItem
-                key={id}
-                name={name}
-                number={number}
-                handleDelete={() => handleDeleteContact(id)}
-              />
-            );
+          {contacts.map(contact => {
+            return <ContactItem key={contact.id} values={contact} />;
           })}
         </Box>
       ) : (

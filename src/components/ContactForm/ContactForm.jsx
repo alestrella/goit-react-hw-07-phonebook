@@ -2,7 +2,10 @@ import { Formik } from 'formik';
 import * as Yup from 'yup';
 import NumberFormat from 'react-number-format';
 import toast from 'react-hot-toast';
-import { nanoid } from 'nanoid';
+import {
+  useGetContactsQuery,
+  useAddContactMutation,
+} from 'redux/contactsSlice';
 import {
   Button,
   Label,
@@ -10,8 +13,6 @@ import {
   FormStyled,
   ErrorText,
 } from './ContactForm.styled';
-import { useDispatch, useSelector } from 'react-redux';
-import { addContact, getContacts } from 'redux/contactsSlice';
 
 const contactSchema = Yup.object({
   name: Yup.string()
@@ -36,17 +37,14 @@ const MaskedInput = ({ field, ...props }) => (
 );
 
 export const ContactForm = () => {
-  const initialValues = {
-    name: '',
-    number: '',
-  };
+  const initialValues = { name: '', number: '' };
 
-  const dispatch = useDispatch();
-  const NameList = useSelector(getContacts).map(contact =>
-    contact.name.toLowerCase()
-  );
+  const { data: contacts } = useGetContactsQuery();
+  const [addContact] = useAddContactMutation();
 
-  const handleSubmit = ({ name, number }, { resetForm }) => {
+  const handleSubmit = async ({ name, number }, { resetForm }) => {
+    const NameList = contacts.map(contact => contact.name.toLowerCase());
+
     const checkDuplicateContact = name => {
       if (NameList.includes(name.toLowerCase())) {
         toast.error(`${name} is already in contacts`);
@@ -58,14 +56,18 @@ export const ContactForm = () => {
       return;
     }
 
-    const newContact = {
-      id: nanoid(),
-      name,
-      number,
-    };
-    dispatch(addContact(newContact));
-    resetForm();
-    toast.success('New contact added');
+    try {
+      const newContact = {
+        name,
+        number,
+      };
+      await addContact(newContact);
+      resetForm();
+      toast.success('New contact added');
+    } catch (error) {
+      toast.error(error.message);
+      console.log(error);
+    }
   };
 
   return (

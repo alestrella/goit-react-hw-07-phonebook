@@ -1,15 +1,14 @@
-import { useSelector } from 'react-redux';
-import { getContacts } from 'redux/contactsSlice';
 import { Toaster } from 'react-hot-toast';
+import { useGetContactsQuery } from 'redux/contactsSlice';
+import Box from './Box';
+import { Heading, MainHeading } from './Headings/Headings.styled';
 import ContactForm from './ContactForm';
 import Filter from './Filter';
 import ContactList from './ContactList';
-import Box from './Box';
-import { Heading, MainHeading } from './Headings/Headings.styled';
 import NotificationText from './NotificationText';
 
 const App = () => {
-  const contacts = useSelector(getContacts);
+  const { isSuccess } = useGetContactsQuery();
 
   return (
     <Box py={5} fontFamily="body" as="main">
@@ -29,9 +28,9 @@ const App = () => {
 
         <Box px={5} py={5} borderRadius="normal" bg="bgDark" boxShadow="card">
           <Heading>Contacts</Heading>
-          {contacts.length > 0 ? (
+          {isSuccess ? (
             <>
-              <Filter />
+              {/* <Filter /> */}
               <ContactList />
             </>
           ) : (
