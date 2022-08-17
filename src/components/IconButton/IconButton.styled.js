@@ -14,4 +14,8 @@ export const ButtonStyled = styled.button`
   :focus {
     color: ${p => p.theme.colors.hover};
   }
+
+  :disabled {
+    color: ${p => p.theme.colors.input};
+  }
 `;

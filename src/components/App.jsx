@@ -3,12 +3,12 @@ import { useGetContactsQuery } from 'redux/contactsSlice';
 import Box from './Box';
 import { Heading, MainHeading } from './Headings/Headings.styled';
 import ContactForm from './ContactForm';
-import Filter from './Filter';
 import ContactList from './ContactList';
 import NotificationText from './NotificationText';
+import { Loader } from './Loader/Loader';
 
 const App = () => {
-  const { isSuccess } = useGetContactsQuery();
+  const { data: contacts, isFetching, isLoading } = useGetContactsQuery();
 
   return (
     <Box py={5} fontFamily="body" as="main">
@@ -28,15 +28,13 @@ const App = () => {
 
         <Box px={5} py={5} borderRadius="normal" bg="bgDark" boxShadow="card">
           <Heading>Contacts</Heading>
-          {isSuccess ? (
-            <>
-              {/* <Filter /> */}
-              <ContactList />
-            </>
-          ) : (
+          {(isLoading || isFetching) && <Loader />}
+          {contacts?.length > 0 && <ContactList />}
+          {contacts?.length === 0 && !isLoading && (
             <NotificationText message="There are no contacts" />
           )}
         </Box>
+
         <Toaster
           toastOptions={{
             style: {

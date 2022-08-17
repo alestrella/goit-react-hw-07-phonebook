@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { ButtonStyled } from './IconButton.styled';
 
-const IconButton = ({ children, onClick }) => (
-  <ButtonStyled type="button" onClick={onClick}>
+const IconButton = ({ children, onClick, disabled }) => (
+  <ButtonStyled type="button" onClick={onClick} disabled={disabled}>
     {children}
   </ButtonStyled>
 );
